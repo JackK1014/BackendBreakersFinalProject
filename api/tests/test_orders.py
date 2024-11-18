@@ -5,6 +5,7 @@ import pytest
 from ..main import app
 from ..controllers import orders as controller
 from ..models import orders as model
+from datetime import datetime
 
 client = TestClient(app)
 
@@ -100,3 +101,20 @@ def test_delete_order(db_session):
 
     # Assertions
     assert response.status_code == 204
+def test_read_all_sorted_by_date(db_session):
+    # Mock data for orders
+    orders_data = [
+        model.Order(id=1, customer_name="John Doe", description="Test order", order_date=datetime(2024, 11, 17, 10, 30)),
+        model.Order(id=2, customer_name="Jane Doe", description="Another test order", order_date=datetime(2024, 11, 16, 15, 45)),
+    ]
+
+    db_session.query.return_value.order_by.return_value.all.return_value = orders_data
+
+    results = controller.read_all_sorted_by_date(db_session)
+    assert len(results) == 2
+    assert results[0].order_date > results[1].order_date
+
+    db_session.query.return_value.filter.return_value.order_by.return_value.all.return_value = [orders_data[1]]
+    results_filtered = controller.read_all_sorted_by_date(db_session, datetime(2024, 11, 16))
+    assert len(results_filtered) == 1
+    assert results_filtered[0].customer_name == "Jane Doe"

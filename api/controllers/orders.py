@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as model
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime, timedelta
 
 
 def create(db: Session, request):
@@ -66,3 +67,18 @@ def delete(db: Session, item_id):
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+def read_all_sorted_by_date(db: Session, date: datetime | None = None):
+    try:
+        query = db.query(model.Order)
+        if date:
+            start_of_day = datetime.combine(date, datetime.min.time())
+            end_of_day = datetime.combine(date, datetime.max.time())
+            query = query.filter(model.Order.order_date.between(start_of_day, end_of_day))
+
+        result = query.order_by(model.Order.order_date.desc()).all()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
+    return result
