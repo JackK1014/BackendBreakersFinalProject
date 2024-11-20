@@ -11,6 +11,6 @@ class Recipe(Base):
     sandwich_id = Column(Integer, ForeignKey("sandwiches.id"))
     resource_id = Column(Integer, ForeignKey("resources.id"))
     amount = Column(Integer, index=True, nullable=False, server_default='0.0')
-
+    time_to_make = Column(Integer, nullable=False, server_default="0")
     sandwich = relationship("Sandwich", back_populates="recipes")
     resource = relationship("Resource", back_populates="recipes")
