@@ -7,6 +7,7 @@ from .sandwiches import Sandwich
 
 class RecipeBase(BaseModel):
     amount: int
+    time_to_make: int
 
 
 class RecipeCreate(RecipeBase):
