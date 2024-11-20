@@ -6,7 +6,11 @@ from .order_details import OrderDetail
 
 
 class OrderBase(BaseModel):
+    customer_id: int
     customer_name: str
+    tracking_number: Optional[str] = None
+    order_status: Optional[str] = None
+    total_price: Optional[float] = None
     description: Optional[str] = None
 
 
@@ -15,7 +19,11 @@ class OrderCreate(OrderBase):
 
 
 class OrderUpdate(BaseModel):
+    customer_id: Optional[int] = None
     customer_name: Optional[str] = None
+    tracking_number: Optional[str] = None
+    order_status: Optional[str] = None
+    total_price: Optional[float] = None
     description: Optional[str] = None
 
 
