@@ -16,8 +16,10 @@ class Order(Base):
     order_status = Column(String(50))
     total_price = Column(DECIMAL(10, 2))
     description = Column(String(300))
+    status = Column(String(50), nullable=False, default="pending")
 
     customer = relationship("Customer", back_populates="orders")
     order_details = relationship("OrderDetail", back_populates="order")
     payment = relationship("Payment", back_populates="order", uselist=False)
     promotions = relationship("Promotion", secondary="order_promotions", back_populates="orders")
+

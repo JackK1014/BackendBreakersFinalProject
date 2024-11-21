@@ -9,6 +9,7 @@ class RecipeBase(BaseModel):
     sandwich_id: int
     resource_id: int
     amount: int
+    time_to_make: int
 
 
 class RecipeCreate(RecipeBase):

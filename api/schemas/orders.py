@@ -12,7 +12,7 @@ class OrderBase(BaseModel):
     order_status: Optional[str] = None
     total_price: Optional[float] = None
     description: Optional[str] = None
-
+    status: str = "pending"
 
 class OrderCreate(OrderBase):
     pass
@@ -25,6 +25,7 @@ class OrderUpdate(BaseModel):
     order_status: Optional[str] = None
     total_price: Optional[float] = None
     description: Optional[str] = None
+    status: Optional[str] = None
 
 
 class Order(OrderBase):
