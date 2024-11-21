@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel,Field
+from pydantic import BaseModel,Field, field_validator
 from .order_details import OrderDetail
 
 
@@ -32,9 +32,12 @@ class Order(OrderBase):
     order_date: str = Field(..., alias="order_date", description="Formatted order date")
     order_details: list[OrderDetail] = None
 
-    @staticmethod
-    def format_datetime(value: datetime) -> str:
-        """Format datetime to be a user friendly string."""
-        return value.strftime("%B %d, %Y, %I:%M %p")
-    class ConfigDict:
+    @field_validator("order_date", mode="before")
+    def format_order_date(cls, value):
+        """Format the order_date field to a string."""
+        if isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d %H:%M:%S")
+        return value
+
+    class Config:
         from_attributes = True

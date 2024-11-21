@@ -20,8 +20,7 @@ def create(db: Session, request):
         db.commit()
         db.refresh(new_order)
     except SQLAlchemyError as e:
-        db.rollback()
-        error = str(e.__dict__.get('orig', e)) or str(e)
+        error = str(e.__dict__.get('orig', e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
 
     return new_order
