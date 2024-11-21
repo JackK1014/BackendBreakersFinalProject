@@ -6,20 +6,24 @@ from datetime import datetime, timedelta
 
 
 def create(db: Session, request):
-    new_item = model.Order(
+    new_order = model.Order(
+        customer_id=request.customer_id,
         customer_name=request.customer_name,
+        tracking_number=request.tracking_number,
+        order_status=request.order_status,
+        total_price=request.total_price,
         description=request.description
     )
 
     try:
-        db.add(new_item)
+        db.add(new_order)
         db.commit()
-        db.refresh(new_item)
+        db.refresh(new_order)
     except SQLAlchemyError as e:
-        error = str(e.__dict__['orig'])
+        error = str(e.__dict__.get('orig', e))
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
 
-    return new_item
+    return new_order
 
 
 def read_all(db: Session):

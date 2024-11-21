@@ -5,6 +5,8 @@ from .sandwiches import Sandwich
 
 
 class OrderDetailBase(BaseModel):
+    order_id: int
+    sandwich_id: int
     amount: int
 
 
