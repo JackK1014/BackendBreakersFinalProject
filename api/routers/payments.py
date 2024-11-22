@@ -2,12 +2,19 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from ..controllers import payments as controller
 from ..schemas import payments as schema
+from ..schemas.payments import Payment, TotalPayments
 from ..dependencies.database import get_db
 
 router = APIRouter(
     tags=['Payments'],
     prefix="/payments"
 )
+
+
+@router.get("/total", response_model=TotalPayments)
+def calculate_total(db: Session = Depends(get_db)):
+    total = controller.get_total_payments(db)
+    return {"total": total}
 
 
 @router.post("/", response_model=schema.Payment)
