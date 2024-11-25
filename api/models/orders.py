@@ -13,9 +13,9 @@ class Order(Base):
     customer_name = Column(String(100))
     order_date = Column(DATETIME, nullable=False, server_default=func.now())
     tracking_number = Column(String(100))
-    order_status = Column(String(50))
     total_price = Column(DECIMAL(10, 2))
     description = Column(String(300))
+    order_type = Column(String(50), nullable=False, default="Dine-In")
     status = Column(String(50), nullable=False, default="pending")
 
     customer = relationship("Customer", back_populates="orders")

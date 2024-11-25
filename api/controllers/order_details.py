@@ -1,10 +1,51 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import order_details as model
+from ..models.recipes import Recipe
+from ..models.resources import Resource
 from sqlalchemy.exc import SQLAlchemyError
 
 
 def create(db: Session, request):
+    insufficient_resources = []
+
+    recipes = db.query(Recipe).filter_by(sandwich_id=request.sandwich_id).all()
+    if not recipes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No recipe found for sandwich ID {request.sandwich_id}"
+        )
+
+    for recipe in recipes:
+        resource = db.query(Resource).filter_by(id=recipe.resource_id).first()
+        if not resource:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Resource ID {recipe.resource_id} not found"
+            )
+
+        required_amount = recipe.amount * request.amount
+        if resource.amount < required_amount:
+            insufficient_resources.append({
+                "item": resource.item,
+                "available": resource.amount,
+                "required": required_amount
+            })
+
+    if insufficient_resources:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "message": "Insufficient ingredients",
+                "details": insufficient_resources
+            }
+        )
+
+    for recipe in recipes:
+        resource = db.query(Resource).filter_by(id=recipe.resource_id).first()
+        resource.amount -= recipe.amount * request.amount
+        db.add(resource)
+
     new_item = model.OrderDetail(
         order_id=request.order_id,
         sandwich_id=request.sandwich_id,

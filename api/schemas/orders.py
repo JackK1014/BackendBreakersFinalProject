@@ -9,9 +9,9 @@ class OrderBase(BaseModel):
     customer_id: int
     customer_name: str
     tracking_number: Optional[str] = None
-    order_status: Optional[str] = None
     total_price: Optional[float] = None
     description: Optional[str] = None
+    order_type: str = "Dine-In"
     status: str = "pending"
 
 class OrderCreate(OrderBase):
@@ -22,9 +22,9 @@ class OrderUpdate(BaseModel):
     customer_id: Optional[int] = None
     customer_name: Optional[str] = None
     tracking_number: Optional[str] = None
-    order_status: Optional[str] = None
     total_price: Optional[float] = None
     description: Optional[str] = None
+    order_type: Optional[str] = None
     status: Optional[str] = None
 
 
